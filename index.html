@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10131a" />
+    <meta
+      name="description"
+      content="A clean webcam studio that tunes camera settings for clear, smooth video."
+    />
+    <title>Focus — Webcam Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Focus webcam studio home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h7A2.5 2.5 0 0 1 16 8.5v7a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-7Z" />
+              <path d="m16 10 4-2v8l-4-2" />
+              <circle cx="10" cy="12" r="2.5" />
+            </svg>
+          </span>
+          <span>focus<span class="brand-light">.</span></span>
+        </a>
+        <div class="topbar-right">
+          <span class="privacy-note">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2.5 4 5v4.2c0 4 2.6 6.8 6 8.3 3.4-1.5 6-4.3 6-8.3V5l-6-2.5Z" />
+              <path d="m7.5 10 1.7 1.7 3.5-3.5" />
+            </svg>
+            Camera stays on your device
+          </span>
+          <span class="status-pill" id="connection-status" data-state="offline">
+            <span class="status-dot"></span>
+            <span id="connection-label">Not connected</span>
+          </span>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro">
+          <div>
+            <p class="eyebrow">YOUR PERSONAL CAMERA STUDIO</p>
+            <h1>Look your <span>clearest.</span></h1>
+            <p class="intro-copy">A better picture starts with the right light and a camera in focus.</p>
+          </div>
+          <button class="button button-primary start-button" id="start-button" type="button">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h6A2.5 2.5 0 0 1 14 7.5v5a2.5 2.5 0 0 1-2.5 2.5h-6A2.5 2.5 0 0 1 3 12.5v-5Z" />
+              <path d="m14 8 3-1.5v7L14 12" />
+            </svg>
+            <span>Connect camera</span>
+          </button>
+        </section>
+
+        <section class="studio-grid" aria-label="Webcam studio">
+          <div class="preview-column">
+            <div class="preview-frame" id="preview-frame">
+              <video id="camera-preview" autoplay muted playsinline aria-label="Live camera preview"></video>
+              <canvas id="background-preview" aria-label="Live preview with background effect" hidden></canvas>
+              <div class="preview-placeholder" id="preview-placeholder">
+                <div class="placeholder-icon" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <rect x="5" y="12" width="27" height="24" rx="6" />
+                    <path d="m32 20 11-6v20l-11-6" />
+                    <circle cx="18.5" cy="24" r="6" />
+                  </svg>
+                </div>
+                <h2>Your camera, in a better light.</h2>
+                <p>Connect a webcam to see your live preview and tune its picture.</p>
+                <button class="button button-soft" id="placeholder-connect" type="button">Connect webcam</button>
+              </div>
+              <div class="preview-overlay preview-overlay-top">
+                <span class="live-tag" id="live-tag" hidden><span></span> LIVE</span>
+                <span class="light-tag" id="light-tag" hidden>
+                  <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                    <circle cx="9" cy="9" r="3" />
+                    <path d="M9 1.5v2M9 14.5v2M16.5 9h-2M3.5 9h-2m12.8-5.3-1.4 1.4M5.1 12.9l-1.4 1.4m10.6 0-1.4-1.4M5.1 5.1 3.7 3.7" />
+                  </svg>
+                  <span id="light-label">Auto light</span>
+                </span>
+              </div>
+              <div class="preview-overlay preview-overlay-bottom">
+                <span class="preview-resolution" id="resolution-label">Waiting for camera</span>
+                <span class="preview-fps" id="preview-fps"></span>
+              </div>
+            </div>
+            <p class="preview-caption">
+              <span class="caption-indicator"></span>
+              Preview is processed locally and never recorded unless you take a snapshot.
+            </p>
+          </div>
+
+          <aside class="control-card" aria-label="Camera controls">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">QUICK CONTROLS</p>
+                <h2>Camera setup</h2>
+              </div>
+              <span class="heading-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M10 3v2M10 15v2M3 10h2m10 0h2M5.05 5.05l1.42 1.42m7.06 7.06 1.42 1.42m0-9.9-1.42 1.42m-7.06 7.06-1.42 1.42" />
+                  <circle cx="10" cy="10" r="3" />
+                </svg>
+              </span>
+            </div>
+
+            <label class="field-label" for="camera-select">Camera</label>
+            <div class="select-wrap">
+              <select id="camera-select" disabled>
+                <option value="">Connect a camera first</option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+            </div>
+
+            <div class="setting-block">
+              <div class="setting-title">
+                <div>
+                  <h3>Frame rate</h3>
+                  <p>Adapts to available light</p>
+                </div>
+                <span class="auto-chip">AUTO</span>
+              </div>
+              <div class="select-wrap compact-select">
+                <select id="frame-rate-select" disabled aria-label="Frame rate">
+                  <option value="auto">Smart auto</option>
+                  <option value="30">30 frames per second</option>
+                  <option value="60">60 frames per second</option>
+                </select>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </div>
+              <p class="setting-hint" id="frame-rate-hint">Connect your camera to enable adaptive frame rate.</p>
+            </div>
+
+            <div class="setting-block auto-controls">
+              <div class="setting-title">
+                <div>
+                  <h3>Camera corrections</h3>
+                  <p id="auto-controls-hint">Turn on supported automatic controls</p>
+                </div>
+              </div>
+              <div class="feature-list">
+                <div class="feature-row">
+                  <span class="feature-icon" aria-hidden="true">
+                    <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" /><path d="M9 1.5v2M9 14.5v2M16.5 9h-2M3.5 9h-2" /></svg>
+                  </span>
+                  <span>Auto exposure</span>
+                  <span class="feature-state" id="exposure-state">—</span>
+                </div>
+                <div class="feature-row">
+                  <span class="feature-icon" aria-hidden="true">
+                    <svg viewBox="0 0 18 18" fill="none"><path d="M2.5 6h13v8h-13z" /><path d="m6 6 1-2h4l1 2" /><circle cx="9" cy="10" r="2.5" /></svg>
+                  </span>
+                  <span>Continuous focus</span>
+                  <span class="feature-state" id="focus-state">—</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-block background-controls">
+              <div class="setting-title">
+                <div>
+                  <h3>Live background</h3>
+                  <p>Remove, blur, or replace it in your preview</p>
+                </div>
+              </div>
+              <div class="select-wrap compact-select">
+                <select id="background-mode" disabled aria-label="Live background effect">
+                  <option value="off">Original background</option>
+                  <option value="remove">Remove background</option>
+                  <option value="blur">Blur background</option>
+                  <option value="replace">Replace with photo</option>
+                </select>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </div>
+              <div class="background-image-controls">
+                <label class="button button-soft image-picker" for="background-file">Add your photo</label>
+                <input id="background-file" type="file" accept="image/*" hidden />
+                <label class="field-label" for="background-url">Internet photo URL</label>
+                <div class="background-url-row">
+                  <input id="background-url" type="url" inputmode="url" placeholder="https://…" aria-label="Internet photo URL" />
+                  <button class="button button-soft" id="background-url-button" type="button">Use</button>
+                </div>
+                <div class="background-presets" aria-label="Sample internet backgrounds">
+                  <button class="preset-button" type="button" data-background-preset="studio">Studio</button>
+                  <button class="preset-button" type="button" data-background-preset="coast">Coast</button>
+                  <button class="preset-button" type="button" data-background-preset="mountains">Mountains</button>
+                </div>
+                <p class="setting-hint" id="background-status" role="status" aria-live="polite">Choose an effect after connecting your camera.</p>
+              </div>
+            </div>
+
+            <div class="control-actions">
+              <button class="button button-primary capture-button" id="capture-button" type="button" disabled>
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3 6.5h3l1.3-2h5.4l1.3 2h3v9H3v-9Z" />
+                  <circle cx="10" cy="11" r="3" />
+                </svg>
+                Take snapshot
+              </button>
+              <button class="icon-button" id="mirror-button" type="button" disabled aria-pressed="false" title="Mirror preview" aria-label="Mirror preview">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M10 3v14M7 5H4v10h3m6-10h3v10h-3" />
+                  <path d="m5.5 8-1.5 2 1.5 2m9-4 1.5 2-1.5 2" />
+                </svg>
+              </button>
+              <button class="icon-button" id="torch-button" type="button" disabled aria-pressed="false" title="Camera light not available" aria-label="Toggle camera light">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M7 2.5h6l-.8 5.2a3 3 0 0 0 .6 2.4l1.2 1.5v2.9H6v-2.9l1.2-1.5a3 3 0 0 0 .6-2.4L7 2.5Z" />
+                  <path d="M7.2 6h5.6M8 17.5h4" />
+                </svg>
+              </button>
+            </div>
+            <p class="message" id="camera-message" role="status" aria-live="polite"></p>
+          </aside>
+        </section>
+
+        <section class="tip-card" aria-label="Image quality tip">
+          <div class="tip-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 2.5a5.5 5.5 0 0 0-3.4 9.8c.8.6 1.2 1.2 1.2 2.2h4.4c0-1 .4-1.6 1.2-2.2A5.5 5.5 0 0 0 10 2.5Z" /><path d="M8 17h4m-3.5-2.5h3" /></svg>
+          </div>
+          <div>
+            <h2>A little light goes a long way</h2>
+            <p>Face a window or soft lamp for a brighter, sharper picture. In dim rooms, your camera may lower its frame rate to let in more light.</p>
+          </div>
+          <span class="tip-label">QUICK TIP</span>
+        </section>
+      </main>
+      <footer>Made for a clearer you <span>·</span> Works with your browser’s camera permissions</footer>
+    </div>
+  </body>
+</html>
