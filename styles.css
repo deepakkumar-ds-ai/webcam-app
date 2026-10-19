@@ -33,6 +33,10 @@ select {
   font: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 button {
   color: inherit;
 }
@@ -240,6 +244,10 @@ select:focus-visible {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.17);
 }
 
+.preview-column {
+  min-width: 0;
+}
+
 #camera-preview {
   display: none;
   width: 100%;
@@ -278,6 +286,7 @@ select:focus-visible {
 .preview-placeholder {
   position: absolute;
   inset: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -306,13 +315,15 @@ select:focus-visible {
 }
 
 .preview-placeholder h2 {
+  max-width: 100%;
   margin: 0;
   font: 600 17px "Manrope", sans-serif;
   letter-spacing: -0.4px;
+  text-wrap: balance;
 }
 
 .preview-placeholder p {
-  max-width: 340px;
+  max-width: min(340px, 100%);
   margin: 8px 0 17px;
   color: var(--muted);
   font-size: 12px;
@@ -398,10 +409,16 @@ select:focus-visible {
 .preview-caption {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 8px;
   margin: 11px 2px 0;
   color: #828a98;
   font-size: 10px;
+}
+
+.preview-caption > span:last-child {
+  min-width: 0;
+  line-height: 1.5;
 }
 
 .caption-indicator {
@@ -469,14 +486,14 @@ select:focus-visible {
 
 .select-wrap select {
   width: 100%;
-  height: 40px;
+  height: 44px;
   appearance: none;
   padding: 0 36px 0 11px;
   border: 1px solid #343b47;
   border-radius: 8px;
   background: #171b23;
   color: #e3e6eb;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .select-wrap select:disabled {
@@ -555,11 +572,11 @@ select:focus-visible {
 }
 
 .compact-select select {
-  height: 36px;
+  height: 40px;
 }
 
 .compact-select > svg {
-  top: 11px;
+  top: 13px;
 }
 
 .background-image-controls {
@@ -587,14 +604,14 @@ select:focus-visible {
 .background-url-row input {
   width: 100%;
   min-width: 0;
-  height: 36px;
+  height: 40px;
   padding: 0 10px;
   border: 1px solid #343b47;
   border-radius: 8px;
   background: #171b23;
   color: #e3e6eb;
   font: inherit;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .background-url-row input:focus-visible {
@@ -603,7 +620,7 @@ select:focus-visible {
 }
 
 .background-url-row .button {
-  min-height: 36px;
+  min-height: 40px;
   padding: 0 12px;
 }
 
@@ -807,13 +824,15 @@ footer span {
   }
 
   .studio-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .control-card {
+    min-width: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 22px;
+    column-gap: 24px;
+    padding: 24px;
   }
 
   .card-heading,
@@ -881,12 +900,13 @@ footer span {
   }
 
   .start-button {
-    min-height: 39px;
+    width: 100%;
+    min-height: 46px;
     font-size: 12px;
   }
 
   .preview-frame {
-    min-height: 218px;
+    min-height: clamp(190px, 58vw, 280px);
     border-radius: 12px;
   }
 
@@ -912,13 +932,14 @@ footer span {
   }
 
   .preview-caption {
-    font-size: 9px;
+    font-size: 10px;
     line-height: 1.4;
   }
 
   .control-card {
+    min-width: 0;
     display: block;
-    padding: 17px;
+    padding: 18px;
   }
 
   .setting-block {
@@ -937,7 +958,7 @@ footer span {
   }
 
   .tip-card p {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .tip-label {
@@ -946,7 +967,70 @@ footer span {
 
   footer {
     padding: 20px 0;
-    font-size: 9px;
+    font-size: 10px;
+  }
+
+  .field-label,
+  .setting-title h3 {
+    font-size: 13px;
+  }
+
+  .setting-title p,
+  .setting-hint,
+  .feature-row {
+    font-size: 12px;
+  }
+
+  .select-wrap select,
+  .compact-select select {
+    height: 46px;
+    font-size: 16px;
+  }
+
+  .compact-select > svg {
+    top: 16px;
+  }
+
+  .background-url-row {
+    gap: 8px;
+  }
+
+  .background-url-row input {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .background-url-row .button {
+    min-width: 58px;
+    min-height: 44px;
+  }
+
+  .button-soft,
+  .capture-button {
+    min-height: 44px;
+  }
+
+  .image-picker,
+  .preset-button {
+    min-height: 44px;
+  }
+
+  .preset-button {
+    font-size: 12px;
+  }
+
+  .preset-button {
+    flex: 1;
+  }
+
+  .icon-button {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .zoom-controls input {
+    height: 36px;
   }
 }
 
