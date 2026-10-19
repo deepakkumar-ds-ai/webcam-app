@@ -248,6 +248,129 @@ select:focus-visible {
   min-width: 0;
 }
 
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.view-mode-switch {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--stroke);
+  border-radius: 9px;
+  background: #171b23;
+}
+
+.view-mode-button {
+  min-height: 31px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #aab1bd;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.view-mode-button[aria-pressed="true"] {
+  background: #2a303a;
+  color: var(--text);
+}
+
+.view-mode-button:focus-visible,
+.fullscreen-button:focus-visible,
+.fullscreen-actions .button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.fullscreen-button {
+  min-height: 37px;
+  padding: 0 11px;
+}
+
+.fullscreen-button svg,
+.fullscreen-actions svg {
+  width: 16px;
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.preview-column[data-view-mode="phone"] .preview-frame {
+  width: min(100%, 405px, 40.5vh);
+  min-height: 0;
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+}
+
+.preview-column[data-view-mode="phone"] .preview-caption {
+  max-width: min(100%, 405px, 40.5vh);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.fullscreen-actions {
+  position: absolute;
+  z-index: 2;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.fullscreen-actions .button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(20, 24, 31, 0.84);
+  color: var(--text);
+  backdrop-filter: blur(10px);
+}
+
+.preview-frame:fullscreen,
+.preview-frame.is-fullscreen-fallback {
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  background: #090b0e;
+  box-shadow: none;
+}
+
+.preview-frame:fullscreen #camera-preview,
+.preview-frame:fullscreen #background-preview,
+.preview-frame.is-fullscreen-fallback #camera-preview,
+.preview-frame.is-fullscreen-fallback #background-preview {
+  object-fit: contain;
+}
+
+.preview-frame:fullscreen .fullscreen-actions,
+.preview-frame.is-fullscreen-fallback .fullscreen-actions {
+  display: flex;
+}
+
+.preview-frame.is-fullscreen-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.has-fullscreen-preview {
+  overflow: hidden;
+}
+
 #camera-preview {
   display: none;
   width: 100%;

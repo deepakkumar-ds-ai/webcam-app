@@ -1,5 +1,6 @@
 const preview = document.querySelector("#camera-preview");
 const previewFrame = document.querySelector("#preview-frame");
+const previewColumn = document.querySelector("#preview-column");
 const backgroundPreview = document.querySelector("#background-preview");
 const placeholder = document.querySelector("#preview-placeholder");
 const startButton = document.querySelector("#start-button");
@@ -9,6 +10,9 @@ const frameRateSelect = document.querySelector("#frame-rate-select");
 const zoomControl = document.querySelector("#zoom-level");
 const zoomValue = document.querySelector("#zoom-value");
 const captureButton = document.querySelector("#capture-button");
+const fullscreenButton = document.querySelector("#fullscreen-button");
+const fullscreenCaptureButton = document.querySelector("#fullscreen-capture-button");
+const exitFullscreenButton = document.querySelector("#exit-fullscreen-button");
 const mirrorButton = document.querySelector("#mirror-button");
 const torchButton = document.querySelector("#torch-button");
 const message = document.querySelector("#camera-message");
@@ -107,6 +111,9 @@ function stopPreviewMonitoring() {
 }
 
 function stopCamera() {
+  if (document.fullscreenElement === previewFrame || previewFrame.classList.contains("is-fullscreen-fallback")) {
+    closeFullscreen();
+  }
   stopPreviewMonitoring();
   stopBackgroundProcessing();
   backgroundMode = "off";
@@ -122,6 +129,7 @@ function stopCamera() {
   liveTag.hidden = true;
   lightTag.hidden = true;
   captureButton.disabled = true;
+  fullscreenButton.disabled = true;
   frameRateSelect.disabled = true;
   zoomControl.disabled = true;
   zoomLevel = 1;
@@ -445,6 +453,7 @@ async function startCamera(deviceId = "") {
   liveTag.hidden = false;
   lightTag.hidden = false;
   captureButton.disabled = false;
+  fullscreenButton.disabled = false;
   frameRateSelect.disabled = false;
   zoomControl.disabled = false;
   backgroundModeSelect.disabled = false;
@@ -662,6 +671,46 @@ function captureSnapshot() {
   }, imageType, 0.94);
 }
 
+async function openFullscreen() {
+  if (!activeTrack) return;
+  try {
+    if (previewFrame.requestFullscreen) {
+      await previewFrame.requestFullscreen();
+    } else {
+      previewFrame.classList.add("is-fullscreen-fallback");
+      syncFullscreenState();
+    }
+  } catch (error) {
+    console.error("Could not open the camera preview fullscreen.", error);
+    message.textContent = `Could not open fullscreen (${error.message || error.name}).`;
+  }
+}
+
+async function closeFullscreen() {
+  try {
+    if (document.fullscreenElement === previewFrame) {
+      await document.exitFullscreen();
+    } else {
+      previewFrame.classList.remove("is-fullscreen-fallback");
+      syncFullscreenState();
+    }
+  } catch (error) {
+    console.error("Could not close the fullscreen camera preview.", error);
+    message.textContent = `Could not exit fullscreen (${error.message || error.name}).`;
+  }
+}
+
+function syncFullscreenState() {
+  const isFullscreen = document.fullscreenElement === previewFrame
+    || previewFrame.classList.contains("is-fullscreen-fallback");
+  previewFrame.classList.toggle("is-fullscreen", isFullscreen);
+  document.body.classList.toggle("has-fullscreen-preview", isFullscreen);
+  fullscreenButton.setAttribute(
+    "aria-label",
+    isFullscreen ? "Close fullscreen camera preview" : "Open camera preview fullscreen",
+  );
+}
+
 function handleCameraEnded() {
   stopCamera();
   setConnection("offline", "Camera disconnected");
@@ -673,9 +722,29 @@ function handleCameraEnded() {
 startButton.addEventListener("click", () => startCamera(cameraSelect.value));
 placeholderConnect.addEventListener("click", () => startCamera(cameraSelect.value));
 cameraSelect.addEventListener("change", () => startCamera(cameraSelect.value));
+document.querySelectorAll("[data-view-mode]").forEach((button) => {
+  if (!button.matches("button")) return;
+  button.addEventListener("click", () => {
+    const mode = button.dataset.viewMode;
+    if (mode !== "desktop" && mode !== "phone") return;
+    previewColumn.dataset.viewMode = mode;
+    document.querySelectorAll(".view-mode-button").forEach((modeButton) => {
+      modeButton.setAttribute("aria-pressed", String(modeButton === button));
+    });
+  });
+});
 frameRateSelect.addEventListener("change", applySelectedFrameRate);
 zoomControl.addEventListener("input", updateZoom);
 captureButton.addEventListener("click", captureSnapshot);
+fullscreenButton.addEventListener("click", openFullscreen);
+fullscreenCaptureButton.addEventListener("click", captureSnapshot);
+exitFullscreenButton.addEventListener("click", closeFullscreen);
+document.addEventListener("fullscreenchange", syncFullscreenState);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && previewFrame.classList.contains("is-fullscreen-fallback")) {
+    closeFullscreen();
+  }
+});
 torchButton.addEventListener("click", toggleTorch);
 mirrorButton.addEventListener("click", () => {
   const mirrored = mirrorButton.getAttribute("aria-pressed") !== "true";

@@ -57,7 +57,19 @@
         </section>
 
         <section class="studio-grid" aria-label="Webcam studio">
-          <div class="preview-column">
+          <div class="preview-column" id="preview-column" data-view-mode="desktop">
+            <div class="preview-toolbar">
+              <div class="view-mode-switch" role="group" aria-label="Camera preview layout">
+                <button class="view-mode-button" type="button" data-view-mode="desktop" aria-pressed="true">Desktop</button>
+                <button class="view-mode-button" type="button" data-view-mode="phone" aria-pressed="false">Phone</button>
+              </div>
+              <button class="button button-soft fullscreen-button" id="fullscreen-button" type="button" disabled aria-label="Open camera preview fullscreen">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M7 3.5H3.5V7M13 3.5h3.5V7M16.5 13v3.5H13M7 16.5H3.5V13" />
+                </svg>
+                Fullscreen
+              </button>
+            </div>
             <div class="preview-frame" id="preview-frame">
               <video id="camera-preview" autoplay muted playsinline aria-label="Live camera preview"></video>
               <canvas id="background-preview" aria-label="Live preview with background effect" hidden></canvas>
@@ -86,6 +98,16 @@
               <div class="preview-overlay preview-overlay-bottom">
                 <span class="preview-resolution" id="resolution-label">Waiting for camera</span>
                 <span class="preview-fps" id="preview-fps"></span>
+              </div>
+              <div class="fullscreen-actions" aria-label="Fullscreen camera controls">
+                <button class="button button-soft" id="fullscreen-capture-button" type="button">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M3 6.5h3l1.3-2h5.4l1.3 2h3v9H3v-9Z" />
+                    <circle cx="10" cy="11" r="3" />
+                  </svg>
+                  Take snapshot
+                </button>
+                <button class="button button-soft" id="exit-fullscreen-button" type="button">Exit fullscreen</button>
               </div>
             </div>
             <p class="preview-caption">
