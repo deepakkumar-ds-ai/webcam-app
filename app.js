@@ -1,10 +1,13 @@
 const preview = document.querySelector("#camera-preview");
+const previewFrame = document.querySelector("#preview-frame");
 const backgroundPreview = document.querySelector("#background-preview");
 const placeholder = document.querySelector("#preview-placeholder");
 const startButton = document.querySelector("#start-button");
 const placeholderConnect = document.querySelector("#placeholder-connect");
 const cameraSelect = document.querySelector("#camera-select");
 const frameRateSelect = document.querySelector("#frame-rate-select");
+const zoomControl = document.querySelector("#zoom-level");
+const zoomValue = document.querySelector("#zoom-value");
 const captureButton = document.querySelector("#capture-button");
 const mirrorButton = document.querySelector("#mirror-button");
 const torchButton = document.querySelector("#torch-button");
@@ -35,6 +38,7 @@ let lastBrightness = null;
 let requestedFrameRate = "auto";
 let applyingFrameRate = false;
 let torchEnabled = false;
+let zoomLevel = 1;
 let previousDecodedFrames = null;
 let previousFrameSampleTime = 0;
 let segmenter = null;
@@ -119,6 +123,11 @@ function stopCamera() {
   lightTag.hidden = true;
   captureButton.disabled = true;
   frameRateSelect.disabled = true;
+  zoomControl.disabled = true;
+  zoomLevel = 1;
+  zoomControl.value = "1";
+  zoomValue.value = "1.0×";
+  previewFrame.style.setProperty("--preview-zoom", "1");
   backgroundModeSelect.disabled = true;
   cameraSelect.disabled = true;
   mirrorButton.disabled = true;
@@ -437,6 +446,7 @@ async function startCamera(deviceId = "") {
   lightTag.hidden = false;
   captureButton.disabled = false;
   frameRateSelect.disabled = false;
+  zoomControl.disabled = false;
   backgroundModeSelect.disabled = false;
   mirrorButton.disabled = false;
   setConnection("online", "Camera connected");
@@ -467,6 +477,12 @@ function updateCameraDetails() {
   if (settings.frameRate) {
     previewFps.textContent = `${Math.round(settings.frameRate)} FPS`;
   }
+}
+
+function updateZoom() {
+  zoomLevel = Number(zoomControl.value);
+  zoomValue.value = `${zoomLevel.toFixed(1)}×`;
+  previewFrame.style.setProperty("--preview-zoom", String(zoomLevel));
 }
 
 function startPreviewMonitoring() {
@@ -612,7 +628,19 @@ function captureSnapshot() {
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
   }
-  context.drawImage(source, 0, 0, canvas.width, canvas.height);
+  const cropWidth = canvas.width / zoomLevel;
+  const cropHeight = canvas.height / zoomLevel;
+  context.drawImage(
+    source,
+    (canvas.width - cropWidth) / 2,
+    (canvas.height - cropHeight) / 2,
+    cropWidth,
+    cropHeight,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
   const transparent = backgroundMode === "remove";
   const imageType = transparent ? "image/png" : "image/jpeg";
   const extension = transparent ? "png" : "jpg";
@@ -646,6 +674,7 @@ startButton.addEventListener("click", () => startCamera(cameraSelect.value));
 placeholderConnect.addEventListener("click", () => startCamera(cameraSelect.value));
 cameraSelect.addEventListener("change", () => startCamera(cameraSelect.value));
 frameRateSelect.addEventListener("change", applySelectedFrameRate);
+zoomControl.addEventListener("input", updateZoom);
 captureButton.addEventListener("click", captureSnapshot);
 torchButton.addEventListener("click", toggleTorch);
 mirrorButton.addEventListener("click", () => {

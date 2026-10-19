@@ -245,6 +245,8 @@ select:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(var(--preview-zoom, 1));
+  transition: transform 100ms ease-out;
 }
 
 #camera-preview.is-visible {
@@ -252,7 +254,7 @@ select:focus-visible {
 }
 
 #camera-preview.is-mirrored {
-  transform: scaleX(-1);
+  transform: scale(var(--preview-zoom, 1)) scaleX(-1);
 }
 
 #camera-preview.is-effect-source {
@@ -265,10 +267,12 @@ select:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(var(--preview-zoom, 1));
+  transition: transform 100ms ease-out;
 }
 
 #background-preview.is-mirrored {
-  transform: scaleX(-1);
+  transform: scale(var(--preview-zoom, 1)) scaleX(-1);
 }
 
 .preview-placeholder {
@@ -506,6 +510,26 @@ select:focus-visible {
 
 .setting-title h3 {
   margin: 0;
+}
+
+.zoom-controls input {
+  width: 100%;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.zoom-controls input:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.zoom-controls output {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .setting-title p,
